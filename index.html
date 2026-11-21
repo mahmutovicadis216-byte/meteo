@@ -116,36 +116,36 @@
     </div>
   </div>
 
-  <script>
-    const CHANNEL_ID = "3591201";
-    const READ_API_KEY = "5U8UUBY5WSGRZOB1";
-    const URL = `https://thingspeak.com{CHANNEL_ID}/feeds/last.json?api_key=${READ_API_KEY}`;
+<script>
+  const CHANNEL_ID = "3591201";
+  const READ_API_KEY = "5U8UUBY5WSGRZOB1";
+  const URL = "https://thingspeak.com" + CHANNEL_ID + "/feeds/last.json?api_key=" + READ_API_KEY;
 
-    async function dohvatiPodatke() {
-      try {
-        const odgovor = await fetch(URL);
-        if (!odgovor.ok) throw new Error("Greška pri dohvaćanju");
-        const data = await odgovor.json();
+  async function dohvatiPodatke() {
+    try {
+      const odgovor = await fetch(URL);
+      if (!odgovor.ok) throw new Error("Greška pri dohvaćanju");
+      const data = await odgovor.json();
 
-        document.getElementById("temp").textContent = data.field1 ? parseFloat(data.field1).toFixed(1) : "--";
-        document.getElementById("vlaga").textContent = data.field2 ? Math.round(parseFloat(data.field2)) : "--";
-        document.getElementById("tlak").textContent = data.field3 ? parseFloat(data.field3).toFixed(1) : "--";
-        document.getElementById("svjetlo").textContent = data.field4 ? Math.round(parseFloat(data.field4)) : "--";
-        document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
+      document.getElementById("temp").textContent = data.field1 ? parseFloat(data.field1).toFixed(1) : "--";
+      document.getElementById("vlaga").textContent = data.field2 ? Math.round(parseFloat(data.field2)) : "--";
+      document.getElementById("tlak").textContent = data.field3 ? parseFloat(data.field3).toFixed(1) : "--";
+      document.getElementById("svjetlo").textContent = data.field4 ? Math.round(parseFloat(data.field4)) : "--";
+      document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
 
-        if (data.created_at) {
-          const vrijeme = new Date(data.created_at);
-          document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
-        }
-        document.getElementById("statusDot").style.background = "#22c55e";
-      } catch (err) {
-        document.getElementById("zadnjeAzuriranje").textContent = "Čekam vezu s postajom...";
-        document.getElementById("statusDot").style.background = "#ef4444";
+      if (data.created_at) {
+        const vrijeme = new Date(data.created_at);
+        document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
       }
+      document.getElementById("statusDot").style.background = "#22c55e";
+    } catch (err) {
+      document.getElementById("zadnjeAzuriranje").textContent = "Čekam vezu s postajom...";
+      document.getElementById("statusDot").style.background = "#ef4444";
     }
+  }
 
-    dohvatiPodatke();
-    setInterval(dohvatiPodatke, 15000);
-  </script>
-</body>
+  dohvatiPodatke();
+  setInterval(dohvatiPodatke, 15000);
+</script>
+ </body>
 </html>
