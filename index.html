@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -248,3 +248,56 @@
         if (status.includes("KISA") || status.includes("UPOZORENJE") || status.includes("DEMO")) {
           weatherIcon.textContent = "🌧️";
           forecastBar.classList.add("alert");
+          if (status.includes("VRTI") || status.includes("DEMO") || status.includes("UPOZORENJE") || status.includes("AKTIVAN")) {
+            radarBox.classList.add("active-fast");
+          } else {
+            radarBox.classList.remove("active-fast");
+          }
+        } else if (status.includes("OBLACNO")) {
+          weatherIcon.textContent = "☁️";
+          forecastBar.classList.remove("alert");
+          radarBox.classList.remove("active-fast");
+        } else {
+          weatherIcon.textContent = "☀️";
+          forecastBar.classList.remove("alert");
+          radarBox.classList.remove("active-fast");
+        }
+
+        const vrijeme = new Date().toLocaleTimeString("hr-HR");
+        document.getElementById("syncInfo").textContent = "Zadnje očitavanje: " + vrijeme;
+      } catch (greska) {
+        aktivniApi = null;
+        document.getElementById("forecastText").textContent = "PONOVNO POVEZIVANJE...";
+      }
+    }
+
+    async function aktivirajDemo() {
+      if (!aktivniApi) await pronadjiServer();
+      if (!aktivniApi) return;
+
+      const btn = document.getElementById("demoBtn");
+      const radarBox = document.getElementById("radarBox");
+      const forecastText = document.getElementById("forecastText");
+
+      btn.disabled = true;
+      btn.textContent = "DEMO RADAR AKTIVAN (5 SEK)...";
+      radarBox.classList.add("active-fast");
+      forecastText.textContent = "PROGNOZA: DEMO TEST RADARA...";
+
+      try {
+        await fetch(`${aktivniApi}/update?token=${BLYNK_TOKEN}&V5=1`);
+      } catch (e) {}
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "POKRENI DEMO RADAR";
+        radarBox.classList.remove("active-fast");
+        osvjeziStanicu();
+      }, 5500);
+    }
+
+    osvjeziStanicu();
+    setInterval(osvjeziStanicu, 3500);
+  </script>
+</body>
+</html>
