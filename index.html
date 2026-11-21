@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -6,7 +7,7 @@
   <meta name="theme-color" content="#08121e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Meteo Postaja</title>
+  <title>Meteo Postaja - Adis.M</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
@@ -23,6 +24,7 @@
       user-select: none;
     }
     .app-container {
+      position: relative;
       width: 100%;
       max-width: 390px;
       display: flex;
@@ -30,8 +32,21 @@
       align-items: center;
       gap: 18px;
     }
-
-    /* RADAR SEKCIJA */
+    .author-tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: #5eead4;
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      padding: 4px 10px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.15);
+      z-index: 10;
+    }
     .radar-section {
       position: relative;
       width: 240px;
@@ -39,7 +54,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 6px;
+      margin-top: 18px;
     }
     .radar-box {
       position: relative;
@@ -55,24 +70,13 @@
       overflow: hidden;
       transition: all 0.4s ease;
     }
-    .ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(94, 234, 212, 0.25);
-    }
+    .ring { position: absolute; border-radius: 50%; border: 1px solid rgba(94, 234, 212, 0.25); }
     .r1 { width: 74%; height: 74%; }
     .r2 { width: 48%; height: 48%; }
     .r3 { width: 22%; height: 22%; }
     .cross-h { position: absolute; width: 100%; height: 1px; background: rgba(94, 234, 212, 0.22); }
     .cross-v { position: absolute; width: 1px; height: 100%; background: rgba(94, 234, 212, 0.22); }
-    .center-dot {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #99f6e4;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #5eead4;
-    }
+    .center-dot { position: absolute; width: 6px; height: 6px; background: #99f6e4; border-radius: 50%; box-shadow: 0 0 8px #5eead4; }
     .sweep {
       position: absolute;
       width: 50%;
@@ -87,15 +91,8 @@
       border-color: #38bdf8;
       box-shadow: 0 0 42px rgba(56, 189, 248, 0.45), inset 0 0 25px rgba(56, 189, 248, 0.3);
     }
-    .radar-box.active-fast .sweep {
-      animation: rotateRadar 0.85s linear infinite;
-    }
-    @keyframes rotateRadar {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* VREMENSKA IKONA U KUTU RADARA */
+    .radar-box.active-fast .sweep { animation: rotateRadar 0.85s linear infinite; }
+    @keyframes rotateRadar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .weather-badge-icon {
       position: absolute;
       bottom: -4px;
@@ -103,55 +100,20 @@
       font-size: 4.1rem;
       filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.75));
       z-index: 5;
-      transition: transform 0.3s ease;
     }
-
-    /* 4 KARTICE SA SENZORIMA */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%;
-    }
+    .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
     .sensor-card {
       background: linear-gradient(145deg, rgba(22, 38, 58, 0.85), rgba(12, 23, 38, 0.92));
       border: 1px solid rgba(56, 189, 248, 0.22);
       border-radius: 16px;
       padding: 14px 16px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .card-title {
-      font-size: 0.85rem;
-      color: #cbd5e1;
-      font-weight: 500;
-    }
-    .card-mini-icon {
-      font-size: 1.05rem;
-      color: #38bdf8;
-      opacity: 0.9;
-    }
-    .card-value {
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: #38bdf8;
-      letter-spacing: -0.3px;
-    }
-    .card-value span {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: #94a3b8;
-    }
-
-    /* TRAKA ZA PROGNOZU */
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .card-title { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; }
+    .card-mini-icon { font-size: 1.05rem; color: #38bdf8; }
+    .card-value { font-size: 1.55rem; font-weight: 700; color: #38bdf8; }
+    .card-value span.unit { font-size: 0.95rem; font-weight: 500; color: #94a3b8; }
     .forecast-bar {
       width: 100%;
       background: linear-gradient(90deg, rgba(14, 116, 144, 0.28), rgba(22, 78, 99, 0.45), rgba(14, 116, 144, 0.28));
@@ -162,22 +124,12 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.15);
     }
     .forecast-bar.alert {
       border-color: rgba(248, 113, 113, 0.65);
       background: linear-gradient(90deg, rgba(127, 29, 29, 0.4), rgba(153, 27, 27, 0.55), rgba(127, 29, 29, 0.4));
     }
-    .forecast-text {
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #e0f2fe;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    /* CRVENI DEMO GUMB */
+    .forecast-text { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; color: #e0f2fe; text-transform: uppercase; text-align: center; }
     .demo-button {
       width: 100%;
       padding: 17px;
@@ -191,22 +143,17 @@
       text-transform: uppercase;
       cursor: pointer;
       box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-      transition: transform 0.12s ease, filter 0.2s ease;
     }
     .demo-button:active { transform: scale(0.97); }
-    .demo-button:disabled { filter: grayscale(0.35); opacity: 0.75; cursor: not-allowed; }
-
-    .sync-info {
-      font-size: 0.72rem;
-      color: #64748b;
-      margin-top: -6px;
-    }
+    .demo-button:disabled { filter: grayscale(0.35); opacity: 0.75; }
+    .sync-info { font-size: 0.72rem; color: #64748b; margin-top: -6px; text-align: center; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
-    <!-- RADAR -->
+    <div class="author-tag">Adis.M</div>
+
     <div class="radar-section">
       <div id="radarBox" class="radar-box">
         <div class="ring r1"></div>
@@ -220,66 +167,75 @@
       <div id="weatherIcon" class="weather-badge-icon">☀️</div>
     </div>
 
-    <!-- KARTICE PODATAKA -->
     <div class="cards-grid">
       <div class="sensor-card">
-        <div class="card-top">
-          <span class="card-title">Temperatura</span>
-          <span class="card-mini-icon">🌡️</span>
-        </div>
-        <div class="card-value"><span id="valTemp" style="font-size:1.55rem;color:#38bdf8;font-weight:700;">--</span> <span>°C</span></div>
+        <div class="card-top"><span class="card-title">Temperatura</span><span class="card-mini-icon">🌡️</span></div>
+        <div class="card-value"><span id="valTemp">--</span> <span class="unit">°C</span></div>
       </div>
-
       <div class="sensor-card">
-        <div class="card-top">
-          <span class="card-title">Vlaga</span>
-          <span class="card-mini-icon">💧</span>
-        </div>
-        <div class="card-value"><span id="valHum" style="font-size:1.55rem;color:#38bdf8;font-weight:700;">--</span> <span>%</span></div>
+        <div class="card-top"><span class="card-title">Vlaga</span><span class="card-mini-icon">💧</span></div>
+        <div class="card-value"><span id="valHum">--</span> <span class="unit">%</span></div>
       </div>
-
       <div class="sensor-card">
-        <div class="card-top">
-          <span class="card-title">Tlak</span>
-          <span class="card-mini-icon">⏱️</span>
-        </div>
-        <div class="card-value"><span id="valPress" style="font-size:1.55rem;color:#38bdf8;font-weight:700;">--</span> <span>hPa</span></div>
+        <div class="card-top"><span class="card-title">Tlak</span><span class="card-mini-icon">⏱️</span></div>
+        <div class="card-value"><span id="valPress">--</span> <span class="unit">hPa</span></div>
       </div>
-
       <div class="sensor-card">
-        <div class="card-top">
-          <span class="card-title">Svjetlost</span>
-          <span class="card-mini-icon">☀️</span>
-        </div>
-        <div class="card-value"><span id="valLight" style="font-size:1.55rem;color:#38bdf8;font-weight:700;">--</span> <span>lx</span></div>
+        <div class="card-top"><span class="card-title">Svjetlost</span><span class="card-mini-icon">☀️</span></div>
+        <div class="card-value"><span id="valLight">--</span> <span class="unit">lx</span></div>
       </div>
     </div>
 
-    <!-- STATUS / PROGNOZA -->
     <div id="forecastBar" class="forecast-bar">
       <span>📡</span>
-      <div id="forecastText" class="forecast-text">POVEZIVANJE SA STANICOM...</div>
+      <div id="forecastText" class="forecast-text">TRAŽIM BLYNK SERVER...</div>
     </div>
 
-    <!-- DEMO GUMB -->
     <button id="demoBtn" class="demo-button" onclick="aktivirajDemo()">POKRENI DEMO RADAR</button>
     <div id="syncInfo" class="sync-info">Podaci uživo s tvoje Meteo postaje</div>
   </div>
 
   <script>
     const BLYNK_TOKEN = "Vd2d3Wp2gLyTIePEgPuxW4iCYe_rynZM";
-    const API_URL = "https://blynk.cloud";
+    const SERVERI = [
+      "https://blynk.cloud",
+      "https://blynk.cloud",
+      "https://blynk.cloud",
+      "https://blynk.cloud"
+    ];
+    let aktivniApi = null;
+
+    async function pronadjiServer() {
+      for (const srv of SERVERI) {
+        try {
+          const r = await fetch(`${srv}/isHardwareConnected?token=${BLYNK_TOKEN}`);
+          if (r.ok) {
+            aktivniApi = srv;
+            return srv;
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
 
     async function osvjeziStanicu() {
+      if (!aktivniApi) {
+        await pronadjiServer();
+      }
+      if (!aktivniApi) {
+        document.getElementById("forecastText").textContent = "PROVJERI TOKEN ILI WI-FI";
+        return;
+      }
+
       try {
-        const odgovor = await fetch(`${API_URL}/get?token=${BLYNK_TOKEN}&V0&V1&V2&V3&V4`);
-        if (!odgovor.ok) throw new Error("Mreža nedostupna");
+        const odgovor = await fetch(`${aktivniApi}/get?token=${BLYNK_TOKEN}&V0&V1&V2&V3&V4`);
+        if (!odgovor.ok) throw new Error("Greška čitanja");
         const podaci = await odgovor.json();
 
-        document.getElementById("valTemp").textContent = parseFloat(podaci.V0).toFixed(1);
-        document.getElementById("valHum").textContent = Math.round(podaci.V1);
-        document.getElementById("valPress").textContent = parseFloat(podaci.V2).toFixed(1);
-        document.getElementById("valLight").textContent = Math.round(podaci.V3);
+        if (podaci.V0 !== undefined) document.getElementById("valTemp").textContent = parseFloat(podaci.V0).toFixed(1);
+        if (podaci.V1 !== undefined) document.getElementById("valHum").textContent = Math.round(podaci.V1);
+        if (podaci.V2 !== undefined) document.getElementById("valPress").textContent = parseFloat(podaci.V2).toFixed(1);
+        if (podaci.V3 !== undefined) document.getElementById("valLight").textContent = Math.round(podaci.V3);
 
         const status = String(podaci.V4 || "ONLINE").toUpperCase();
         const radarBox = document.getElementById("radarBox");
@@ -292,6 +248,3 @@
         if (status.includes("KISA") || status.includes("UPOZORENJE") || status.includes("DEMO")) {
           weatherIcon.textContent = "🌧️";
           forecastBar.classList.add("alert");
-          if (status.includes("VRTI") || status.includes("DEMO") || status.includes("UPOZORENJE") || status.includes("AKTIVAN")) {
-            radarBox.classList.add("active-fast");
-          } else {
