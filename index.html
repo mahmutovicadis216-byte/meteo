@@ -29,7 +29,7 @@
     .status-bar { font-size: 0.9rem; color: #94a3b8; }
     .dot {
       display: inline-block; width: 10px; height: 10px; border-radius: 50%;
-      background: #22c55e; margin-right: 6px; box-shadow: 0 0 8px #22c55e;
+      background: #f59e0b; margin-right: 6px; box-shadow: 0 0 8px #f59e0b;
     }
     .prognoza-banner {
       background: linear-gradient(90deg, #0284c7, #2563eb);
@@ -63,23 +63,20 @@
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      padding: 20px;
+      padding: 18px;
       text-align: center;
     }
-    .radar-box h2 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 14px; }
+    .radar-box h2 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 12px; }
     .radar-btn {
-      display: block;
-      text-align: center;
+      display: inline-block;
       background: #38bdf8;
       color: #0f172a;
-      padding: 15px;
+      padding: 14px 24px;
       border-radius: 12px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1.05rem;
-      transition: background 0.2s;
+      font-size: 1rem;
     }
-    .radar-btn:hover { background: #7dd3fc; }
   </style>
 </head>
 <body>
@@ -112,40 +109,50 @@
 
     <div class="radar-box">
       <h2>Radarska slika oborina (Šentvid pri Stični)</h2>
-      <a href="https://windy.com" target="_blank" class="radar-btn">Pogledaj radar uživo na Windy.com</a>
+      <a class="radar-btn" href="https://windy.com" target="_blank">Otvori radar na stranici Windy</a>
     </div>
   </div>
 
-<script>
-  const CHANNEL_ID = "3591201";
-  const READ_API_KEY = "5U8UUBY5WSGRZOB1";
-  const URL = "https://api.thingspeak.com/" + CHANNEL/_ID + "/feeds/last.json?api_key=" + READ_API_KEY;
+  <script>
+    const CHANNEL_ID = "3591201";
+    const READ_API_KEY = "5U8UUBY5WSGRZOB1";
+    const API_URL = "https://thingspeak.com" + CHANNEL_ID + "/feeds/last.json?api_key=" + READ_API_KEY;
 
-  async function dohvatiPodatke() {
-    try {
-      const odgovor = await fetch(URL);
-      if (!odgovor.ok) throw new Error("Greška pri dohvaćanju");
-      const data = await odgovor.json();
+    async function dohvatiPodatke() {
+      try {
+        const odgovor = await fetch(API_URL);
+        if (!odgovor.ok) {
+          throw new Error("HTTP greška: " + odgovor.status);
+        }
+        const data = await odgovor.json();
 
-      document.getElementById("temp").textContent = data.field1 ? parseFloat(data.field1).toFixed(1) : "--";
-      document.getElementById("vlaga").textContent = data.field2 ? Math.round(parseFloat(data.field2)) : "--";
-      document.getElementById("tlak").textContent = data.field3 ? parseFloat(data.field3).toFixed(1) : "--";
-      document.getElementById("svjetlo").textContent = data.field4 ? Math.round(parseFloat(data.field4)) : "--";
-      document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
+        if (!data || data === -1 || !data.created_at) {
+          document.getElementById("zadnjeAzuriranje").textContent = "Kanal je spojen, čekam prvi zapis s postaje...";
+          document.getElementById("statusDot").style.background = "#f59e0b";
+          document.getElementById("statusDot").style.boxShadow = "0 0 8px #f59e0b";
+          return;
+        }
 
-      if (data.created_at) {
+        document.getElementById("temp").textContent = data.field1 !== null ? parseFloat(data.field1).toFixed(1) : "--";
+        document.getElementById("vlaga").textContent = data.field2 !== null ? Math.round(parseFloat(data.field2)) : "--";
+        document.getElementById("tlak").textContent = data.field3 !== null ? parseFloat(data.field3).toFixed(1) : "--";
+        document.getElementById("svjetlo").textContent = data.field4 !== null ? Math.round(parseFloat(data.field4)) : "--";
+        document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
+
         const vrijeme = new Date(data.created_at);
         document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
+        document.getElementById("statusDot").style.background = "#22c55e";
+        document.getElementById("statusDot").style.boxShadow = "0 0 8px #22c55e";
+      } catch (err) {
+        console.error(err);
+        document.getElementById("zadnjeAzuriranje").textContent = "Greška veze s ThingSpeakom";
+        document.getElementById("statusDot").style.background = "#ef4444";
+        document.getElementById("statusDot").style.boxShadow = "0 0 8px #ef4444";
       }
-      document.getElementById("statusDot").style.background = "#22c55e";
-    } catch (err) {
-      document.getElementById("zadnjeAzuriranje").textContent = "Čekam vezu s postajom...";
-      document.getElementById("statusDot").style.background = "#ef4444";
     }
-  }
 
-  dohvatiPodatke();
-  setInterval(dohvatiPodatke, 15000);
-</script>
- </body>
+    dohvatiPodatke();
+    setInterval(dohvatiPodatke, 15000);
+  </script>
+</body>
 </html>
