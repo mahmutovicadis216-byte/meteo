@@ -1,303 +1,139 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#08121e">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Meteo Postaja - Adis.M</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <link rel="apple-touch-icon" href="icon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meteo Postaja Adis.M</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body {
-      background: radial-gradient(circle at 50% 18%, #102a42 0%, #07111d 55%, #040911 100%);
-      color: #ffffff;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f8fafc;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-      user-select: none;
-    }
-    .app-container {
-      position: relative;
-      width: 100%;
-      max-width: 390px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
     }
-    .author-tag {
-      position: absolute;
-      top: 0;
-      left: 0;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: #5eead4;
-      background: rgba(20, 184, 166, 0.12);
-      border: 1px solid rgba(45, 212, 191, 0.35);
-      padding: 4px 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(45, 212, 191, 0.15);
-      z-index: 10;
-    }
-    .radar-section {
-      position: relative;
-      width: 240px;
-      height: 220px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 18px;
-    }
-    .radar-box {
-      position: relative;
-      width: 196px;
-      height: 196px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(20, 184, 166, 0.16) 0%, rgba(13, 148, 136, 0.08) 65%, rgba(6, 78, 59, 0.35) 100%);
-      border: 2px solid rgba(45, 212, 191, 0.55);
-      box-shadow: 0 0 35px rgba(45, 212, 191, 0.22), inset 0 0 25px rgba(45, 212, 191, 0.18);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      transition: all 0.4s ease;
-    }
-    .ring { position: absolute; border-radius: 50%; border: 1px solid rgba(94, 234, 212, 0.25); }
-    .r1 { width: 74%; height: 74%; }
-    .r2 { width: 48%; height: 48%; }
-    .r3 { width: 22%; height: 22%; }
-    .cross-h { position: absolute; width: 100%; height: 1px; background: rgba(94, 234, 212, 0.22); }
-    .cross-v { position: absolute; width: 1px; height: 100%; background: rgba(94, 234, 212, 0.22); }
-    .center-dot { position: absolute; width: 6px; height: 6px; background: #99f6e4; border-radius: 50%; box-shadow: 0 0 8px #5eead4; }
-    .sweep {
-      position: absolute;
-      width: 50%;
-      height: 50%;
-      top: 0;
-      left: 50%;
-      transform-origin: bottom left;
-      background: conic-gradient(from 0deg, rgba(94, 234, 212, 0.65) 0deg, rgba(45, 212, 191, 0.15) 45deg, transparent 75deg);
-      animation: rotateRadar 3.6s linear infinite;
-    }
-    .radar-box.active-fast {
-      border-color: #38bdf8;
-      box-shadow: 0 0 42px rgba(56, 189, 248, 0.45), inset 0 0 25px rgba(56, 189, 248, 0.3);
-    }
-    .radar-box.active-fast .sweep { animation: rotateRadar 0.85s linear infinite; }
-    @keyframes rotateRadar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .weather-badge-icon {
-      position: absolute;
-      bottom: -4px;
-      right: 6px;
-      font-size: 4.1rem;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.75));
-      z-index: 5;
-    }
-    .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-    .sensor-card {
-      background: linear-gradient(145deg, rgba(22, 38, 58, 0.85), rgba(12, 23, 38, 0.92));
-      border: 1px solid rgba(56, 189, 248, 0.22);
+    .container { width: 100%; max-width: 900px; }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(30, 41, 59, 0.8);
       border-radius: 16px;
-      padding: 14px 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .card-title { font-size: 0.85rem; color: #cbd5e1; font-weight: 500; }
-    .card-mini-icon { font-size: 1.05rem; color: #38bdf8; }
-    .card-value { font-size: 1.55rem; font-weight: 700; color: #38bdf8; }
-    .card-value span.unit { font-size: 0.95rem; font-weight: 500; color: #94a3b8; }
-    .forecast-bar {
-      width: 100%;
-      background: linear-gradient(90deg, rgba(14, 116, 144, 0.28), rgba(22, 78, 99, 0.45), rgba(14, 116, 144, 0.28));
-      border: 1px solid rgba(56, 189, 248, 0.4);
+    header h1 { font-size: 1.6rem; color: #38bdf8; margin-bottom: 5px; }
+    .status-bar { font-size: 0.9rem; color: #94a3b8; }
+    .dot {
+      display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+      background: #22c55e; margin-right: 6px; box-shadow: 0 0 8px #22c55e;
+    }
+    .prognoza-banner {
+      background: linear-gradient(90deg, #0284c7, #2563eb);
+      padding: 16px;
       border-radius: 14px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
     }
-    .forecast-bar.alert {
-      border-color: rgba(248, 113, 113, 0.65);
-      background: linear-gradient(90deg, rgba(127, 29, 29, 0.4), rgba(153, 27, 27, 0.55), rgba(127, 29, 29, 0.4));
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 15px;
+      margin-bottom: 22px;
     }
-    .forecast-text { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.5px; color: #e0f2fe; text-transform: uppercase; text-align: center; }
-    .demo-button {
-      width: 100%;
-      padding: 17px;
-      border: none;
+    .card {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      background: linear-gradient(180deg, #ff5238 0%, #d92616 100%);
-      color: #ffffff;
-      font-size: 1.02rem;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
-    .demo-button:active { transform: scale(0.97); }
-    .demo-button:disabled { filter: grayscale(0.35); opacity: 0.75; }
-    .sync-info { font-size: 0.72rem; color: #64748b; margin-top: -6px; text-align: center; }
+    .card .label { font-size: 0.95rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
+    .card .value { font-size: 2.1rem; font-weight: 700; color: #ffffff; }
+    .card .unit { font-size: 1rem; color: #38bdf8; margin-left: 4px; }
+    .radar-box {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 15px;
+      overflow: hidden;
+    }
+    .radar-box h2 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 12px; text-align: center; }
+    iframe { width: 100%; height: 380px; border: none; border-radius: 12px; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>Meteo Postaja Adis.M</h1>
+      <div class="status-bar"><span class="dot" id="statusDot"></span><span id="zadnjeAzuriranje">Učitavanje podataka...</span></div>
+    </header>
 
-  <div class="app-container">
-    <div class="author-tag">Adis.M</div>
+    <div class="prognoza-banner" id="prognoza">PROGNOZA: UČITAVANJE...</div>
 
-    <div class="radar-section">
-      <div id="radarBox" class="radar-box">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
-        <div class="cross-h"></div>
-        <div class="cross-v"></div>
-        <div class="sweep"></div>
-        <div class="center-dot"></div>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Temperatura</div>
+        <div><span class="value" id="temp">--</span><span class="unit">°C</span></div>
       </div>
-      <div id="weatherIcon" class="weather-badge-icon">☀️</div>
-    </div>
-
-    <div class="cards-grid">
-      <div class="sensor-card">
-        <div class="card-top"><span class="card-title">Temperatura</span><span class="card-mini-icon">🌡️</span></div>
-        <div class="card-value"><span id="valTemp">--</span> <span class="unit">°C</span></div>
+      <div class="card">
+        <div class="label">Vlaga zraka</div>
+        <div><span class="value" id="vlaga">--</span><span class="unit">%</span></div>
       </div>
-      <div class="sensor-card">
-        <div class="card-top"><span class="card-title">Vlaga</span><span class="card-mini-icon">💧</span></div>
-        <div class="card-value"><span id="valHum">--</span> <span class="unit">%</span></div>
+      <div class="card">
+        <div class="label">Tlak zraka</div>
+        <div><span class="value" id="tlak">--</span><span class="unit">hPa</span></div>
       </div>
-      <div class="sensor-card">
-        <div class="card-top"><span class="card-title">Tlak</span><span class="card-mini-icon">⏱️</span></div>
-        <div class="card-value"><span id="valPress">--</span> <span class="unit">hPa</span></div>
-      </div>
-      <div class="sensor-card">
-        <div class="card-top"><span class="card-title">Svjetlost</span><span class="card-mini-icon">☀️</span></div>
-        <div class="card-value"><span id="valLight">--</span> <span class="unit">lx</span></div>
+      <div class="card">
+        <div class="label">Svjetlost</div>
+        <div><span class="value" id="svjetlo">--</span><span class="unit">lx</span></div>
       </div>
     </div>
 
-    <div id="forecastBar" class="forecast-bar">
-      <span>📡</span>
-      <div id="forecastText" class="forecast-text">TRAŽIM BLYNK SERVER...</div>
+    <div class="radar-box">
+      <h2>Radarska slika oborina (Šentvid pri Stični)</h2>
+      <iframe src="https://windy.com"></iframe>
     </div>
-
-    <button id="demoBtn" class="demo-button" onclick="aktivirajDemo()">POKRENI DEMO RADAR</button>
-    <div id="syncInfo" class="sync-info">Podaci uživo s tvoje Meteo postaje</div>
   </div>
 
   <script>
-    const BLYNK_TOKEN = "Vd2d3Wp2gLyTIePEgPuxW4iCYe_rynZM";
-    const SERVERI = [
-      "https://blynk.cloud",
-      "https://blynk.cloud",
-      "https://blynk.cloud",
-      "https://blynk.cloud"
-    ];
-    let aktivniApi = null;
+    const CHANNEL_ID = "3591201";
+    const READ_API_KEY = "5U8UUBY5WSGRZOB1";
+    const URL = `https://thingspeak.com{CHANNEL_ID}/feeds/last.json?api_key=${READ_API_KEY}`;
 
-    async function pronadjiServer() {
-      for (const srv of SERVERI) {
-        try {
-          const r = await fetch(`${srv}/isHardwareConnected?token=${BLYNK_TOKEN}`);
-          if (r.ok) {
-            aktivniApi = srv;
-            return srv;
-          }
-        } catch (e) {}
-      }
-      return null;
-    }
-
-    async function osvjeziStanicu() {
-      if (!aktivniApi) {
-        await pronadjiServer();
-      }
-      if (!aktivniApi) {
-        document.getElementById("forecastText").textContent = "PROVJERI TOKEN ILI WI-FI";
-        return;
-      }
-
+    async function dohvatiPodatke() {
       try {
-        const odgovor = await fetch(`${aktivniApi}/get?token=${BLYNK_TOKEN}Vd2d3Wp2gLyTIePEgPuxW4iCYe_rynZM);
-        if (!odgovor.ok) throw new Error("Greška čitanja");
-        const podaci = await odgovor.json();
+        const odgovor = await fetch(URL);
+        if (!odgovor.ok) throw new Error("Greška pri dohvaćanju");
+        const data = await odgovor.json();
 
-        if (podaci.V0 !== undefined) document.getElementById("valTemp").textContent = parseFloat(podaci.V0).toFixed(1);
-        if (podaci.V1 !== undefined) document.getElementById("valHum").textContent = Math.round(podaci.V1);
-        if (podaci.V2 !== undefined) document.getElementById("valPress").textContent = parseFloat(podaci.V2).toFixed(1);
-        if (podaci.V3 !== undefined) document.getElementById("valLight").textContent = Math.round(podaci.V3);
+        document.getElementById("temp").textContent = data.field1 ? parseFloat(data.field1).toFixed(1) : "--";
+        document.getElementById("vlaga").textContent = data.field2 ? Math.round(parseFloat(data.field2)) : "--";
+        document.getElementById("tlak").textContent = data.field3 ? parseFloat(data.field3).toFixed(1) : "--";
+        document.getElementById("svjetlo").textContent = data.field4 ? Math.round(parseFloat(data.field4)) : "--";
+        document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
 
-        const status = String(podaci.V4 || "ONLINE").toUpperCase();
-        const radarBox = document.getElementById("radarBox");
-        const weatherIcon = document.getElementById("weatherIcon");
-        const forecastBar = document.getElementById("forecastBar");
-        const forecastText = document.getElementById("forecastText");
-
-        forecastText.textContent = "PROGNOZA: " + status;
-
-        if (status.includes("KISA") || status.includes("UPOZORENJE") || status.includes("DEMO")) {
-          weatherIcon.textContent = "🌧️";
-          forecastBar.classList.add("alert");
-          if (status.includes("VRTI") || status.includes("DEMO") || status.includes("UPOZORENJE") || status.includes("AKTIVAN")) {
-            radarBox.classList.add("active-fast");
-          } else {
-            radarBox.classList.remove("active-fast");
-          }
-        } else if (status.includes("OBLACNO")) {
-          weatherIcon.textContent = "☁️";
-          forecastBar.classList.remove("alert");
-          radarBox.classList.remove("active-fast");
-        } else {
-          weatherIcon.textContent = "☀️";
-          forecastBar.classList.remove("alert");
-          radarBox.classList.remove("active-fast");
+        if (data.created_at) {
+          const vrijeme = new Date(data.created_at);
+          document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
         }
-
-        const vrijeme = new Date().toLocaleTimeString("hr-HR");
-        document.getElementById("syncInfo").textContent = "Zadnje očitavanje: " + vrijeme;
-      } catch (greska) {
-        aktivniApi = null;
-        document.getElementById("forecastText").textContent = "PONOVNO POVEZIVANJE...";
+        document.getElementById("statusDot").style.background = "#22c55e";
+      } catch (err) {
+        document.getElementById("zadnjeAzuriranje").textContent = "Čekam vezu s postajom...";
+        document.getElementById("statusDot").style.background = "#ef4444";
       }
     }
 
-    async function aktivirajDemo() {
-      if (!aktivniApi) await pronadjiServer();
-      if (!aktivniApi) return;
-
-      const btn = document.getElementById("demoBtn");
-      const radarBox = document.getElementById("radarBox");
-      const forecastText = document.getElementById("forecastText");
-
-      btn.disabled = true;
-      btn.textContent = "DEMO RADAR AKTIVAN (5 SEK)...";
-      radarBox.classList.add("active-fast");
-      forecastText.textContent = "PROGNOZA: DEMO TEST RADARA...";
-
-      try {
-        await fetch(`${aktivniApi}/update?token=${BLYNK_TOKEN}&V5=1`);
-      } catch (e) {}
-
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = "POKRENI DEMO RADAR";
-        radarBox.classList.remove("active-fast");
-        osvjeziStanicu();
-      }, 5500);
-    }
-
-    osvjeziStanicu();
-    setInterval(osvjeziStanicu, 3500);
+    dohvatiPodatke();
+    setInterval(dohvatiPodatke, 15000); // Automatsko osvježavanje svakih 15 sekundi
   </script>
 </body>
 </html>
