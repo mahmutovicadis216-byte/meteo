@@ -20,12 +20,12 @@
     header {
       text-align: center;
       margin-bottom: 20px;
-      padding: 15px;
-      background: rgba(30, 41, 59, 0.8);
+      padding: 16px;
+      background: rgba(30, 41, 59, 0.85);
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    header h1 { font-size: 1.6rem; color: #38bdf8; margin-bottom: 5px; }
+    header h1 { font-size: 1.65rem; color: #38bdf8; margin-bottom: 6px; }
     .status-bar { font-size: 0.9rem; color: #94a3b8; }
     .dot {
       display: inline-block; width: 10px; height: 10px; border-radius: 50%;
@@ -36,7 +36,7 @@
       padding: 16px;
       border-radius: 14px;
       text-align: center;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 20px;
       letter-spacing: 0.5px;
@@ -56,7 +56,7 @@
       text-align: center;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
-    .card .label { font-size: 0.95rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
+    .card .label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
     .card .value { font-size: 2.1rem; font-weight: 700; color: #ffffff; }
     .card .unit { font-size: 1rem; color: #38bdf8; margin-left: 4px; }
     .radar-box {
@@ -83,7 +83,7 @@
   <div class="container">
     <header>
       <h1>Meteo Postaja Adis.M</h1>
-      <div class="status-bar"><span class="dot" id="statusDot"></span><span id="zadnjeAzuriranje">Učitavanje podataka...</span></div>
+      <div class="status-bar"><span class="dot" id="statusDot"></span><span id="zadnjeAzuriranje">Učitavanje podataka s postaje...</span></div>
     </header>
 
     <div class="prognoza-banner" id="prognoza">PROGNOZA: UČITAVANJE...</div>
@@ -115,8 +115,18 @@
 
   <script>
     const CHANNEL_ID = "3591201";
-    const READ_API_KEY = "5U6UB8VY5OG8ZOB1";
-    const API_URL =https://api.thingspeak.com/channels/ 3591201 /feeds.json?api_key= 5U6UB8VY5OG8ZOB1 &results= 2;
+    const READ_API_KEY = "5U8UUBY5WSGRZOB1";
+    const API_URL = "https://thingspeak.com" + CHANNEL_ID + "/feeds/last.json?api_key=" + READ_API_KEY;
+
+    function pretvoriStatus(raw) {
+      if (!raw) return "STABILNO";
+      if (raw === "SUNCE") return "☀️ SUNČANO";
+      if (raw === "OBLACNO") return "☁️ OBLAČNO";
+      if (raw === "KISA_RADAR_VRTI") return "🌧️ KIŠA (Radar se vrti)";
+      if (raw === "KISA_RADAR_MIRUJE") return "🌧️ KIŠA (Radar u mirovanju)";
+      if (raw === "SNIJEG") return "❄️ SNIJEG";
+      return raw.replace(/_/g, " ");
+    }
 
     async function dohvatiPodatke() {
       try {
@@ -127,7 +137,7 @@
         const data = await odgovor.json();
 
         if (!data || data === -1 || !data.created_at) {
-          document.getElementById("zadnjeAzuriranje").textContent = "Kanal je spojen, čekam prvi zapis s postaje...";
+          document.getElementById("zadnjeAzuriranje").textContent = "Kanal spojen, čekam prvi zapis s postaje...";
           document.getElementById("statusDot").style.background = "#f59e0b";
           document.getElementById("statusDot").style.boxShadow = "0 0 8px #f59e0b";
           return;
@@ -137,7 +147,7 @@
         document.getElementById("vlaga").textContent = data.field2 !== null ? Math.round(parseFloat(data.field2)) : "--";
         document.getElementById("tlak").textContent = data.field3 !== null ? parseFloat(data.field3).toFixed(1) : "--";
         document.getElementById("svjetlo").textContent = data.field4 !== null ? Math.round(parseFloat(data.field4)) : "--";
-        document.getElementById("prognoza").textContent = data.field5 ? data.field5 : "STABILNO";
+        document.getElementById("prognoza").textContent = pretvoriStatus(data.field5);
 
         const vrijeme = new Date(data.created_at);
         document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
