@@ -86,7 +86,7 @@
 
     async function fetchData() {
         try {
-            const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${apiReadKey}&results=1`;
+            const url =https://api.thingspeak.com/channels/3591201/feeds.json?api_key=5U8UUBY5WSGRZOB1&results=1;
             const response = await fetch(url);
             const data = await response.json();
             if (data && data.feeds && data.feeds.length > 0) {
