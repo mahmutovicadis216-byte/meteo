@@ -109,11 +109,14 @@
 
     <div class="radar-box">
       <h2>Radarska slika oborina (Šentvid pri Stični)</h2>
-      <a class="radar-btn" href="https://windy.com" target="_blank">Otvori radar na stranici Windy</a>
+      <a class="radar-btn" id="windyLink" href="#" target="_blank">Otvori radar na stranici Windy</a>
     </div>
   </div>
-
   <script>
+    const windyBase = "https://windy.com";
+    const windyKoord = "?45.950,14.843,8";
+    document.getElementById("windyLink").href = windyBase + windyKoord;
+
     function pretvoriStatus(raw) {
       if (!raw) return "STABILNO";
       if (raw === "SUNCE") return "☀️ SUNČANO";
@@ -148,9 +151,14 @@
       const stariScript = document.getElementById("ts-jsonp");
       if (stariScript) stariScript.remove();
 
+      const tsHost = "https://thingspeak.com";
+      const tsPath = "/channels/3591201/feeds/last.json";
+      const tsKey = "?api_key=5U6UB8VY5OG8ZOB1";
+      const tsCb = "&callback=obradiPodatke&t=";
+
       const script = document.createElement("script");
       script.id = "ts-jsonp";
-      script.src = "https://thingspeak.com" + Date.now();
+      script.src = tsHost + tsPath + tsKey + tsCb + Date.now();
       script.onerror = function() {
         document.getElementById("zadnjeAzuriranje").textContent = "Greška učitavanja s ThingSpeaka";
         document.getElementById("statusDot").style.background = "#ef4444";
