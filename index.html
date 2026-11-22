@@ -2,174 +2,134 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meteo Postaja Adis.M</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #f8fafc;
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container { width: 100%; max-width: 900px; }
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: rgba(30, 41, 59, 0.85);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    header h1 { font-size: 1.65rem; color: #38bdf8; margin-bottom: 6px; }
-    .status-bar { font-size: 0.9rem; color: #94a3b8; }
-    .dot {
-      display: inline-block; width: 10px; height: 10px; border-radius: 50%;
-      background: #f59e0b; margin-right: 6px; box-shadow: 0 0 8px #f59e0b;
-    }
-    .prognoza-banner {
-      background: linear-gradient(90deg, #0284c7, #2563eb);
-      padding: 16px;
-      border-radius: 14px;
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 15px;
-      margin-bottom: 22px;
-    }
-    .card {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-    .card .label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
-    .card .value { font-size: 2.1rem; font-weight: 700; color: #ffffff; }
-    .card .unit { font-size: 1rem; color: #38bdf8; margin-left: 4px; }
-    .radar-box {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 18px;
-      text-align: center;
-    }
-    .radar-box h2 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 12px; }
-    .radar-btn {
-      display: inline-block;
-      background: #38bdf8;
-      color: #0f172a;
-      padding: 14px 24px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meteo Postaja Adis.M</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #007acc;
+        }
+        .data-box {
+            background: white;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+            border-radius: 10px;
+            padding: 20px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .data-item {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+        .value {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #007acc;
+        }
+        #refreshInfo {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        button {
+            margin-top: 20px;
+            background-color: #007acc;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #005a99;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Meteo Postaja Adis.M</h1>
-      <div class="status-bar"><span class="dot" id="statusDot"></span><span id="zadnjeAzuriranje">Učitavanje podataka s postaje...</span></div>
-    </header>
-
-    <div class="prognoza-banner" id="prognoza">PROGNOZA: UČITAVANJE...</div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">Temperatura</div>
-        <div><span class="value" id="temp">--</span><span class="unit">°C</span></div>
-      </div>
-      <div class="card">
-        <div class="label">Vlaga zraka</div>
-        <div><span class="value" id="vlaga">--</span><span class="unit">%</span></div>
-      </div>
-      <div class="card">
-        <div class="label">Tlak zraka</div>
-        <div><span class="value" id="tlak">--</span><span class="unit">hPa</span></div>
-      </div>
-      <div class="card">
-        <div class="label">Svjetlost</div>
-        <div><span class="value" id="svjetlo">--</span><span class="unit">lx</span></div>
-      </div>
+    <header>Meteo Postaja Adis.M</header>
+    <div class="data-box">
+        <div class="data-item"><span class="label">Temperatura:</span> <span id="temp" class="value">- °C</span></div>
+        <div class="data-item"><span class="label">Vlaga:</span> <span id="humidity" class="value">- %</span></div>
+        <div class="data-item"><span class="label">Tlak zraka:</span> <span id="pressure" class="value">- hPa</span></div>
+        <div class="data-item"><span class="label">Svjetlost:</span> <span id="light" class="value">- lx</span></div>
+        <div class="data-item"><span class="label">Status/prognoza:</span> <span id="status" class="value">-</span></div>
+        <div class="data-item"><span class="label">Zadnje mjerenje:</span> <span id="lastUpdate" class="value">-</span></div>
+        <div id="refreshInfo">Podaci se osvježavaju svakih 15 sekundi.</div>
+        <button id="btnRadar">Otvori Windy radar za Šentvid pri Stični</button>
     </div>
 
-    <div class="radar-box">
-      <h2>Radarska slika oborina (Šentvid pri Stični)</h2>
-      <a class="radar-btn" id="windyLink" href="#" target="_blank">Otvori radar na stranici Windy</a>
-    </div>
-  </div> 
-    <script>
-    const windyLink = document.getElementById("windyLink");
-    if (windyLink) {
-      windyLink.href = ["https:/", "://windy.com", "?45.950,14.843,8"].join("/");
-    }
+<script>
+    const apiReadKey = "5U8UUBY5WSGRZOB1";
+    const channelID = "3591201";
+    const windyLat = 45.950;
+    const windyLon = 14.843;
 
-    function pretvoriStatus(raw) {
-      if (!raw) return "STABILNO";
-      if (raw === "SUNCE") return "☀️ SUNČANO";
-      if (raw === "OBLACNO") return "☁️ OBLAČNO";
-      if (raw === "KISA_RADAR_VRTI") return "🌧️ KIŠA (Radar se vrti)";
-      if (raw === "KISA_RADAR_MIRUJE") return "🌧️ KIŠA (Radar u mirovanju)";
-      if (raw === "SNIJEG") return "❄️ SNIJEG";
-      return raw.replace(/_/g, " ");
-    }
+    async function fetchData() {
+        try {
+            const url = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${apiReadKey}&results=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data.feeds && data.feeds.length > 0) {
+                const feed = data.feeds[0];
+                document.getElementById('temp').textContent = feed.field1 ? `${parseFloat(feed.field1).toFixed(1)} °C` : '- °C';
+                document.getElementById('humidity').textContent = feed.field2 ? `${parseFloat(feed.field2).toFixed(1)} %` : '- %';
+                document.getElementById('pressure').textContent = feed.field3 ? `${parseFloat(feed.field3).toFixed(1)} hPa` : '- hPa';
+                document.getElementById('light').textContent = feed.field4 ? `${parseFloat(feed.field4).toFixed(0)} lx` : '- lx';
+                
+                const statusMap = {
+                    'SUNCE': 'Sunce',
+                    'OBLACNO': 'Oblačno',
+                    'KISA_RADAR_VRTI': 'Kiša (radar se vrti)',
+                    'KISA_RADAR_MIRUJE': 'Kiša (radar miruje)',
+                    'SNIJEG': 'Snijeg'
+                };
+                let statusText = feed.field5 && statusMap[feed.field5.toUpperCase()] ? statusMap[feed.field5.toUpperCase()] : '-';
+                document.getElementById('status').textContent = statusText;
 
-    async function dohvatiPodatke() {
-      const apiUrl = [
-        "https:/",
-        "://thingspeak.com",
-        "channels",
-        "3591201",
-        "feeds.json?api_key=5U6UB8VY5OG8ZOB1&results=1"
-      ].join("/");
-
-      try {
-        const odgovor = await fetch(apiUrl);
-        if (!odgovor.ok) {
-          throw new Error("HTTP " + odgovor.status);
+                let lastTime = feed.created_at;
+                if (lastTime) {
+                    let dt = new Date(lastTime);
+                    document.getElementById('lastUpdate').textContent = dt.toLocaleString('hr-HR', {
+                        timeZone: 'Europe/Ljubljana',
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+                } else {
+                    document.getElementById('lastUpdate').textContent = '-';
+                }
+            }
+        } catch (error) {
+            console.error('Greška pri dohvaćanju podataka:', error);
         }
-        const json = await odgovor.json();
-
-        if (!json.feeds || json.feeds.length === 0) {
-          document.getElementById("zadnjeAzuriranje").textContent = "Spojeno na ThingSpeak! Čekam prvi podatak s pločice...";
-          document.getElementById("statusDot").style.background = "#f59e0b";
-          document.getElementById("statusDot").style.boxShadow = "0 0 8px #f59e0b";
-          return;
-        }
-
-        const data = json.feeds[0];
-        document.getElementById("temp").textContent = data.field1 !== null ? parseFloat(data.field1).toFixed(1) : "--";
-        document.getElementById("vlaga").textContent = data.field2 !== null ? Math.round(parseFloat(data.field2)) : "--";
-        document.getElementById("tlak").textContent = data.field3 !== null ? parseFloat(data.field3).toFixed(1) : "--";
-        document.getElementById("svjetlo").textContent = data.field4 !== null ? Math.round(parseFloat(data.field4)) : "--";
-        document.getElementById("prognoza").textContent = pretvoriStatus(data.field5);
-
-        const vrijeme = new Date(data.created_at);
-        document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
-        document.getElementById("statusDot").style.background = "#22c55e";
-        document.getElementById("statusDot").style.boxShadow = "0 0 8px #22c55e";
-      } catch (err) {
-        document.getElementById("zadnjeAzuriranje").textContent = "Greška: " + err.message;
-        document.getElementById("statusDot").style.background = "#ef4444";
-      }
     }
 
-    dohvatiPodatke();
-    setInterval(dohvatiPodatke, 15000);
-  </script>
+    document.getElementById('btnRadar').addEventListener('click', () => {
+        const windyUrl = `https://www.windy.com/${windyLat}/${windyLon}/radar`;
+        window.open(windyUrl, '_blank');
+    });
+
+    fetchData();
+    setInterval(fetchData, 15000);
+</script>
 </body>
 </html>
