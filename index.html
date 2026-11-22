@@ -114,8 +114,6 @@
   </div>
 
   <script>
-    const API_URL = "https://thingspeak.com";
-
     function pretvoriStatus(raw) {
       if (!raw) return "STABILNO";
       if (raw === "SUNCE") return "☀️ SUNČANO";
@@ -126,37 +124,38 @@
       return raw.replace(/_/g, " ");
     }
 
-    async function dohvatiPodatke() {
-      try {
-        const odgovor = await fetch(API_URL);
-        if (!odgovor.ok) {
-          throw new Error("HTTP greška: " + odgovor.status);
-        }
-        const data = await odgovor.json();
-
-        if (!data || data === -1 || !data.created_at) {
-          document.getElementById("zadnjeAzuriranje").textContent = "Kanal spojen, čekam prvi zapis s postaje...";
-          document.getElementById("statusDot").style.background = "#f59e0b";
-          document.getElementById("statusDot").style.boxShadow = "0 0 8px #f59e0b";
-          return;
-        }
-
-        document.getElementById("temp").textContent = data.field1 !== null ? parseFloat(data.field1).toFixed(1) : "--";
-        document.getElementById("vlaga").textContent = data.field2 !== null ? Math.round(parseFloat(data.field2)) : "--";
-        document.getElementById("tlak").textContent = data.field3 !== null ? parseFloat(data.field3).toFixed(1) : "--";
-        document.getElementById("svjetlo").textContent = data.field4 !== null ? Math.round(parseFloat(data.field4)) : "--";
-        document.getElementById("prognoza").textContent = pretvoriStatus(data.field5);
-
-        const vrijeme = new Date(data.created_at);
-        document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
-        document.getElementById("statusDot").style.background = "#22c55e";
-        document.getElementById("statusDot").style.boxShadow = "0 0 8px #22c55e";
-      } catch (err) {
-        console.error(err);
-        document.getElementById("zadnjeAzuriranje").textContent = "Greška veze s ThingSpeakom";
-        document.getElementById("statusDot").style.background = "#ef4444";
-        document.getElementById("statusDot").style.boxShadow = "0 0 8px #ef4444";
+    function obradiPodatke(data) {
+      if (!data || data === -1 || !data.created_at) {
+        document.getElementById("zadnjeAzuriranje").textContent = "Kanal je spojen, čekam prvi zapis s postaje...";
+        document.getElementById("statusDot").style.background = "#f59e0b";
+        document.getElementById("statusDot").style.boxShadow = "0 0 8px #f59e0b";
+        return;
       }
+
+      document.getElementById("temp").textContent = data.field1 !== null ? parseFloat(data.field1).toFixed(1) : "--";
+      document.getElementById("vlaga").textContent = data.field2 !== null ? Math.round(parseFloat(data.field2)) : "--";
+      document.getElementById("tlak").textContent = data.field3 !== null ? parseFloat(data.field3).toFixed(1) : "--";
+      document.getElementById("svjetlo").textContent = data.field4 !== null ? Math.round(parseFloat(data.field4)) : "--";
+      document.getElementById("prognoza").textContent = pretvoriStatus(data.field5);
+
+      const vrijeme = new Date(data.created_at);
+      document.getElementById("zadnjeAzuriranje").textContent = "Zadnje mjerenje: " + vrijeme.toLocaleTimeString("hr-HR");
+      document.getElementById("statusDot").style.background = "#22c55e";
+      document.getElementById("statusDot").style.boxShadow = "0 0 8px #22c55e";
+    }
+
+    function dohvatiPodatke() {
+      const stariScript = document.getElementById("ts-jsonp");
+      if (stariScript) stariScript.remove();
+
+      const script = document.createElement("script");
+      script.id = "ts-jsonp";
+      script.src = "https://thingspeak.com" + Date.now();
+      script.onerror = function() {
+        document.getElementById("zadnjeAzuriranje").textContent = "Greška učitavanja s ThingSpeaka";
+        document.getElementById("statusDot").style.background = "#ef4444";
+      };
+      document.body.appendChild(script);
     }
 
     dohvatiPodatke();
